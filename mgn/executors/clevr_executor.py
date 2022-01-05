@@ -100,10 +100,10 @@ class ClevrExecutor:
                 is_matching = True
             return is_matching
 
-        if is_count(x):
-            is_count_question = True
-            data_s = kwargs.get('data_s')
-            data_t = kwargs.get('data_t')
+        # if is_count(x):
+        #     is_count_question = True
+        #     data_s = kwargs.get('data_s')
+        #     data_t = kwargs.get('data_t')
         # ============================================== #
         scene = self.scenes[split][img_index] #  execute program trace on the image's scene
         self.exe_trace = []

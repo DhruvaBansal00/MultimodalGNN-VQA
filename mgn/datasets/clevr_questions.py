@@ -130,7 +130,6 @@ class ClevrQuestionDataLoader(torch.utils.data.DataLoader):
             return collate_fn(batch) if collate_fn else collate(batch)
 
         def collate(batch):
-            # print("PRINTING BATCH INFORMATION", batch)
             elem = batch[0]
             elem_type = type(elem)
             is_tensor = isinstance(elem, torch.Tensor)

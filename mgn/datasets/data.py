@@ -23,7 +23,6 @@ class ClevrData(torch_geometric.data.Data):
         r"""" Increment both edge_index and edge_attr  """
         # Only `*index*` and `*face*` should be cumulatively summed up when
         # creating batches.
-        # print("PRINTING CLEVR INC METHOD INSIDE", self.x)
         return len(self.x) if bool(re.search('(index|face)', key)) else 0
 
 

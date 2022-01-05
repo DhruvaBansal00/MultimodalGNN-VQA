@@ -166,17 +166,14 @@ class Seq2seqParser():
         _, lengths = torch.eq(x, self.end_id).max(1)
         lengths += 1
         lengths_sorted, idx_sorted = lengths.sort(0, descending=True)
-        # print(x)
-        # print(idx_sorted)
         x_sorted = x[idx_sorted]
-        # print(x_sorted)
         y_sorted = None
         if y is not None:
             y_sorted = y[idx_sorted]
         # Sort graph (Gs, Gt) data objects by idx_sorted #
         g_data_sorted = None
         if g_data is not None:
-            logging.info(f"g_data: {g_data}: {type(g_data).__module__}")
+            # logging.info(f"g_data: {g_data}: {type(g_data).__module__}")
             if isinstance(g_data[0],Data):
                 # Handle when g_data = (batch_s, batch_t)
                 batch_s, batch_t = g_data
@@ -204,7 +201,7 @@ class Seq2seqParser():
     def _to_var(self, x):
         device = 'cuda' if (len(self.gpu_ids) > 0 and torch.cuda.is_available()) else 'cpu'
         x = x.to(device)
-        if type(x).__name__ == 'Batch':
+        if type(x).__name__ == 'Batch' or type(x).__name__ == 'DataBatch':
             for k in x.keys:
                 var = x[k]
                 if torch.is_tensor(var) and torch.is_floating_point(var):

@@ -72,7 +72,6 @@ class Seq2seqGNN(nn.Module):
         g_embd = torch.mean(g_embd, dim=1)
         encoder_outputs, encoder_hidden = self.encoder(x, g_embd, input_lengths)
         output_symbols, _ = self.decoder.forward_sample(encoder_outputs, encoder_hidden)
-        print(output_symbols[0].shape)
         # import pdb
         # pdb.set_trace()
         return torch.stack(output_symbols).transpose(0, 1)

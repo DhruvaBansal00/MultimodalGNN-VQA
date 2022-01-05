@@ -140,10 +140,11 @@ for x, y, ans, idx, g_data in loader:
     model.set_input(x, y, g_data)
     pred_program = model.parse()
     x_np, y_np, pg_np, img_idx, ans_np = x.numpy(), y.numpy(), pred_program.numpy(), idx.numpy(), ans.numpy()
-
+    
     if g_data is not None:
         batch_s, batch_t = g_data[0], g_data[1]
-        g_embd, Phi = model.gnn(batch_s.x, batch_s.edge_index_s, batch_s.edge_attr_s, batch_s.batch,
+        print(batch_s)
+        g_embd, Phi = model.seq2seq.gnn(batch_s.x, batch_s.edge_index_s, batch_s.edge_attr_s, batch_s.batch,
                   batch_t.x, batch_t.edge_index_s, batch_t.edge_attr_s, batch_t.batch)
         data_s_list = batch_s.to_data_list()
         data_t_list = batch_t.to_data_list()

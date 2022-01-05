@@ -5,6 +5,9 @@ import json, os, sys, time
 import torch
 import utils.utils as utils
 from utils.logger import Logger
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from PIL import Image
 
 import logging, time, platform
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s")
@@ -107,9 +110,9 @@ class Trainer():
                     self.stats['train_accs_ts'].append(t)
 
                 if t % self.checkpoint_every == 0 or t >= self.num_iters:
-                    print('| checking validation accuracy')
+                    # print('| checking validation accuracy')
                     val_acc = self.check_val_accuracy()
-                    print('| validation accuracy %f' % val_acc)
+                    # print('| validation accuracy %f' % val_acc)
                     if val_acc >= self.stats['best_val_acc']:
                         print('| best model')
                         self.stats['best_val_acc'] = val_acc
@@ -123,9 +126,9 @@ class Trainer():
                         val_loss = self.check_val_loss()
                         print('| validation loss %f' % val_loss)
                         self.stats['val_losses'].append(val_loss)
-                        self.log_stats('val loss', val_loss, t)
+                        # self.log_stats('val loss', val_loss, t)
                     self.stats['val_accs'].append(val_acc)
-                    self.log_stats('val accuracy', val_acc, t)
+                    # self.log_stats('val accuracy', val_acc, t)
                     self.stats['val_accs_ts'].append(t)
                     # Save Checkpoint #
                     self.model.save_checkpoint('%s/checkpoint.pt' % self.run_dir)
@@ -164,12 +167,12 @@ class Trainer():
         for x, y, ans, idx, g_data in self.val_loader:
             self.model.set_input(x, y, g_data)
             pred = self.model.parse()
-            reward += self.get_batch_reward(pred, ans, idx, 'val')
+            reward += self.get_batch_reward(pred, ans, idx, 'val', x)
             t += 1
         reward = reward / t if t != 0 else 0
         return reward
 
-    def get_batch_reward(self, programs, answers, image_idxs, split):
+    def get_batch_reward(self, programs, answers, image_idxs, split, input):
         pg_np = programs.numpy()
         ans_np = answers.numpy()
         idx_np = image_idxs.numpy()
@@ -179,6 +182,20 @@ class Trainer():
             ans = self.vocab['answer_idx_to_token'][ans_np[i]]
             if pred == ans:
                 reward += 1.0
+            if pred != 'error':
+                input_str = ""
+                for index in range(pg_np[i].shape[0]):
+                    if input[i][index] > 0:
+                        input_str += self.vocab['question_idx_to_token'][int(input[i][index])] + " "
+                print(input_str)
+                img_num = ("000000" + str(int(image_idxs)))[-6:]
+                print(image_idxs)
+                Image.open(f'../../data/CLEVR_v1.0/images/train/CLEVR_train_{img_num}.png').show()
+                # imgplot = plt.imshow(img)
+                print(image_idxs)
+                print("Prediction = " + pred)
+                print("Answer = " + ans)
+                plt.show()
         reward /= pg_np.shape[0]
         return reward
 
